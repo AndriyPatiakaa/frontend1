@@ -1,21 +1,32 @@
-import {useEffect, useState} from 'react';
-import {loginAPI} from '../../api/api'
-import {isAuth} from "../../api/isAuth";
-import {Link} from "react-router-dom";
+ import { useEffect, useState } from 'react';
+import { isAuth } from "../../api/isAuth";
+import { Link, useNavigate } from "react-router-dom";
 
 const Index = () => {
-  useEffect(()=>{
-    if(isAuth()){
-      window.location.href='/'
-    }
-  },[])
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isAuth()) {
+      navigate('/');
+    }
+  }, []);
 
   const login = async () => {
     setIsLoading(true);
-    await loginAPI(username, password);
+    setError('');
+
+    // Проста перевірка логіна і пароля
+    if (username === 'admin' && password === 'admin') {
+      localStorage.setItem('auth', 'true'); // можна зберегти у localStorage, щоб isAuth() працювало
+      navigate('/');
+    } else {
+      setError('Невірний логін або пароль');
+    }
+
     setIsLoading(false);
   };
 
@@ -32,22 +43,25 @@ const Index = () => {
             <h3>Username</h3>
             <input
               value={username}
-              onChange={(e)=>setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
             />
             <h3>Password</h3>
             <input
+              type="password"
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="********"
             />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <button
               onClick={login}
               style={{ marginTop: '16px' }}
               disabled={!username || !password}
-            >Login</button>
+            >
+              Login
+            </button>
             <h5>
-              {/* eslint-disable-next-line react/no-unescaped-entities */}
               Don't have an account?{' '}
               <Link to='/register'>
                 <p>Register</p>
