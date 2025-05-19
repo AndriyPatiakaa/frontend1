@@ -1,20 +1,24 @@
-import React from 'react';
-import './App.css'
-import { BrowserRouter, Route, Routes} from 'react-router-dom';
-import Main from "./pages/Main/Main";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Main from './pages/Main/Main';
+// import Login from './pages/Login/Login'; // можеш видалити або закоментувати
+// import Register from './pages/Register/Register'; // за бажанням
 
 function App() {
-    return(
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Main />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-            </Routes>
-        </BrowserRouter>
-    );
+  useEffect(() => {
+    // Автоматичний логін як admin
+    localStorage.setItem('TOKEN', 'fake-token-for-admin');
+  }, []);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        {/* Якщо треба: <Route path="/register" element={<Register />} /> */}
+        {/* <Route path="/login" element={<Login />} /> <-- це видаляй або закоментуй */}
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
